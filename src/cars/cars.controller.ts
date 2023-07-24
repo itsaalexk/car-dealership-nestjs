@@ -1,25 +1,22 @@
-import { Controller, Get, HttpCode, Logger, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, Logger, Param, ParseIntPipe } from '@nestjs/common';
+import { CarsService } from './cars.service';
 
 @Controller('cars')
 export class CarsController {
-  private cars = ['Honda', 'Toyota', 'Ford', 'BMW'];
-  private readonly logger = new Logger(CarsController.name);
+constructor(private readonly carsService:CarsService){}
+  
   @Get()
   @HttpCode(200)
   getAllCars() {
-    return this.cars;
+    return this.carsService.findAll();
   }
-  @Get(':id')
-  getCarById(@Param('id') id: number) {
-    console.log({ id });
-    return this.cars[id];
+  
+
+  @Get(":id")
+  getCarById(@Param("id", ParseIntPipe) id:number){
+    return this.carsService.findOneById(id)
+
   }
-  @Get(':name')
-  getCarsByName(@Param('name') name: string) {
-    console.log({ name });
-    if (name === '') {
-      return this.logger.log('No car name provided');
-    }
-    return this.cars.filter((car) => car === name);
-  }
+
+
 }
